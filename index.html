@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOAN — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080808;
+      --fg: #f0f0f0;
+      --accent1: #ff2d6b;
+      --accent2: #00f5c4;
+      --accent3: #ffe100;
+      --accent4: #a855f7;
+      --mono: 'Space Mono', monospace;
+      --display: 'Bebas Neue', sans-serif;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--mono);
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* CUSTOM CURSOR */
+    #cursor {
+      position: fixed;
+      width: 14px; height: 14px;
+      background: var(--accent2);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.1s, background 0.2s;
+      mix-blend-mode: difference;
+    }
+    #cursor-ring {
+      position: fixed;
+      width: 38px; height: 38px;
+      border: 1.5px solid var(--accent1);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transition: transform 0.18s ease, width 0.2s, height 0.2s;
+      mix-blend-mode: difference;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9990;
+      opacity: 0.35;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 3rem;
+      background: rgba(8,8,8,0.7);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .nav-logo {
+      font-family: var(--display);
+      font-size: 2rem;
+      letter-spacing: 0.15em;
+      color: var(--fg);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent1); }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2.5rem;
+    }
+    nav ul a {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fg);
+      text-decoration: none;
+      opacity: 0.6;
+      transition: opacity 0.2s, color 0.2s;
+    }
+    nav ul a:hover { opacity: 1; color: var(--accent2); }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 3rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,45,107,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,45,107,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.18;
+      animation: blobFloat 8s ease-in-out infinite alternate;
+    }
+    .blob1 { width: 500px; height: 500px; background: var(--accent1); top: -100px; right: -100px; animation-delay: 0s; }
+    .blob2 { width: 400px; height: 400px; background: var(--accent4); bottom: -80px; left: -80px; animation-delay: 3s; }
+    .blob3 { width: 300px; height: 300px; background: var(--accent2); top: 40%; left: 40%; animation-delay: 1.5s; }
+
+    @keyframes blobFloat {
+      from { transform: scale(1) translate(0,0); }
+      to   { transform: scale(1.1) translate(20px, -20px); }
+    }
+
+    .hero-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+    .hero-name {
+      font-family: var(--display);
+      font-size: clamp(6rem, 18vw, 18rem);
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+      opacity: 0;
+      animation: fadeUp 0.8s 0.4s forwards;
+    }
+    .hero-name .stroke {
+      -webkit-text-stroke: 2px var(--accent1);
+      color: transparent;
+    }
+    .hero-sub {
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: rgba(240,240,240,0.5);
+      max-width: 480px;
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.6s forwards;
+    }
+    .hero-cta {
+      margin-top: 3rem;
+      display: flex;
+      gap: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.8s forwards;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-primary {
+      background: var(--accent1);
+      color: #fff;
+    }
+    .btn-primary:hover { transform: translate(-3px,-3px); box-shadow: 6px 6px 0 var(--accent3); }
+    .btn-outline {
+      background: transparent;
+      color: var(--fg);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .btn-outline:hover { border-color: var(--accent2); color: var(--accent2); transform: translate(-3px,-3px); box-shadow: 6px 6px 0 var(--accent2); }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 3rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(240,240,240,0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .hero-scroll::before {
+      content: '';
+      width: 40px; height: 1px;
+      background: var(--accent2);
+      animation: scrollLine 2s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%,100% { width: 40px; opacity: 1; }
+      50% { width: 15px; opacity: 0.4; }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SECTIONS */
+    section { padding: 7rem 3rem; }
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent1);
+      margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: var(--display);
+      font-size: clamp(3rem, 7vw, 6rem);
+      line-height: 1;
+      margin-bottom: 3rem;
+    }
+
+    /* ABOUT */
+    #about {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .about-text p {
+      font-size: 0.8rem;
+      line-height: 2;
+      color: rgba(240,240,240,0.65);
+      margin-bottom: 1.2rem;
+    }
+    .about-text p strong { color: var(--accent2); font-weight: 700; }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+    .skill-item {
+      background: var(--bg);
+      padding: 1.5rem;
+      transition: background 0.2s;
+    }
+    .skill-item:hover { background: rgba(255,45,107,0.06); }
+    .skill-name {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent3);
+      margin-bottom: 0.4rem;
+    }
+    .skill-tools {
+      font-size: 0.7rem;
+      color: rgba(240,240,240,0.45);
+      line-height: 1.6;
+    }
+
+    /* MUSIC */
+    #music { border-top: 1px solid rgba(255,255,255,0.06); }
+    .music-hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .album-card {
+      position: relative;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, var(--accent4), var(--accent1));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .album-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(0,0,0,0.15) 10px,
+        rgba(0,0,0,0.15) 20px
+      );
+    }
+    .album-placeholder {
+      font-family: var(--display);
+      font-size: 5rem;
+      color: rgba(255,255,255,0.15);
+      letter-spacing: 0.1em;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    .album-placeholder small {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      opacity: 0.6;
+    }
+    .album-note {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: rgba(240,240,240,0.3);
+      margin-top: 0.8rem;
+      font-style: italic;
+    }
+    .music-info h3 {
+      font-family: var(--display);
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .music-info p {
+      font-size: 0.75rem;
+      line-height: 2;
+      color: rgba(240,240,240,0.6);
+      margin-bottom: 1.5rem;
+    }
+    .music-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: var(--display);
+      font-size: 3rem;
+      color: var(--accent2);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(240,240,240,0.4);
+    }
+    .covers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 4rem;
+    }
+    .cover-card {
+      aspect-ratio: 1;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: none;
+      transition: transform 0.25s;
+    }
+    .cover-card:hover { transform: scale(1.03); }
+    .cover-card:nth-child(3n+1) { background: linear-gradient(135deg, #1a0010, #3d0020); }
+    .cover-card:nth-child(3n+2) { background: linear-gradient(135deg, #001a15, #003d2e); }
+    .cover-card:nth-child(3n+3) { background: linear-gradient(135deg, #0d001a, #2a003d); }
+    .cover-label {
+      font-family: var(--display);
+      font-size: 1.2rem;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.15);
+      text-align: center;
+    }
+    .cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--accent1);
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: opacity 0.2s;
+    }
+    .cover-card:hover .cover-overlay { opacity: 0.85; }
+
+    /* CLIPS */
+    #clips { border-top: 1px solid rgba(255,255,255,0.06); }
+    .clips-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .clip-card {
+      position: relative;
+      aspect-ratio: 16/9;
+      background: #111;
+      overflow: hidden;
+      cursor: none;
+    }
+    .clip-bg {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .clip-bg-1 { background: linear-gradient(135deg, #1a0020, #ff2d6b22, #0a0a0a); }
+    .clip-bg-2 { background: linear-gradient(135deg, #001520, #00f5c422, #0a0a0a); }
+    .clip-play {
+      width: 64px; height: 64px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .clip-card:hover .clip-play { transform: scale(1.15); border-color: var(--accent2); }
+    .clip-play::after {
+      content: '▶';
+      font-size: 1.2rem;
+      margin-left: 4px;
+      color: rgba(255,255,255,0.7);
+    }
+    .clip-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 1.5rem;
+      background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    }
+    .clip-title {
+      font-family: var(--display);
+      font-size: 1.8rem;
+      margin-bottom: 0.3rem;
+    }
+    .clip-meta {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(240,240,240,0.4);
+    }
+    .clip-tag {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+    .tag-solo { background: var(--accent1); color: #fff; }
+    .tag-collab { background: var(--accent4); color: #fff; }
+
+    /* VISUALS */
+    #visuals { border-top: 1px solid rgba(255,255,255,0.06); }
+    .visuals-intro {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 4rem;
+      margin-bottom: 3rem;
+    }
+    .visuals-intro p {
+      font-size: 0.78rem;
+      line-height: 2;
+      color: rgba(240,240,240,0.6);
+    }
+    .visuals-masonry {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto;
+      gap: 2px;
+    }
+    .visual-item {
+      aspect-ratio: 1;
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+      transition: transform 0.25s;
+    }
+    .visual-item:hover { transform: scale(1.02); z-index: 2; }
+    .visual-item.wide { grid-column: span 2; aspect-ratio: 2/1; }
+    .visual-item.tall { grid-row: span 2; aspect-ratio: 1/2; }
+    .visual-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .visual-placeholder .vp-type {
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+    .visual-placeholder .vp-icon { font-size: 2rem; opacity: 0.2; }
+    .v1 { background: linear-gradient(135deg, #1f0030, #6d00b5); }
+    .v2 { background: linear-gradient(135deg, #001530, #0060b5); }
+    .v3 { background: linear-gradient(135deg, #300010, #b50050); }
+    .v4 { background: linear-gradient(135deg, #001a10, #00b560); }
+    .v5 { background: linear-gradient(135deg, #1a1500, #b59000); }
+    .v6 { background: linear-gradient(135deg, #0a0020, #3300b5); }
+
+    /* 3D */
+    #threed { border-top: 1px solid rgba(255,255,255,0.06); }
+    .threed-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .threed-card {
+      aspect-ratio: 4/3;
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+    }
+    .threed-card:hover .threed-overlay { opacity: 1; }
+    .threed-bg {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .threed-icon { font-size: 4rem; opacity: 0.1; }
+    .t1 { background: linear-gradient(160deg, #0d001f, #2d0060); }
+    .t2 { background: linear-gradient(160deg, #001f15, #006050); }
+    .t3 { background: linear-gradient(160deg, #1f0d00, #602000); }
+    .threed-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      opacity: 0;
+      transition: opacity 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .threed-overlay span {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent2);
+    }
+
+    /* CONTACT */
+    #contact {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      text-align: center;
+    }
+    .contact-inner { max-width: 600px; margin: 0 auto; }
+    .contact-inner p {
+      font-size: 0.75rem;
+      line-height: 2;
+      color: rgba(240,240,240,0.5);
+      margin-bottom: 3rem;
+    }
+    .contact-email {
+      font-family: var(--display);
+      font-size: clamp(2rem, 5vw, 4rem);
+      color: var(--fg);
+      text-decoration: none;
+      display: inline-block;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .contact-email::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 100%;
+      height: 2px;
+      background: var(--accent1);
+      transition: right 0.3s ease;
+    }
+    .contact-email:hover { color: var(--accent1); }
+    .contact-email:hover::after { right: 0; }
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    .social-links a {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(240,240,240,0.35);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .social-links a:hover { color: var(--accent2); }
+
+    /* FOOTER */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    footer p {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: rgba(240,240,240,0.2);
+    }
+    .footer-dot {
+      width: 6px; height: 6px;
+      background: var(--accent1);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.6); }
+    }
+
+    /* MARQUEE */
+    .marquee-wrap {
+      overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 1rem 0;
+      background: rgba(255,45,107,0.03);
+    }
+    .marquee-track {
+      display: flex;
+      gap: 3rem;
+      animation: marquee 18s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-track span {
+      font-family: var(--display);
+      font-size: 1.2rem;
+      letter-spacing: 0.25em;
+      color: rgba(240,240,240,0.12);
+    }
+    .marquee-track span.accent { color: var(--accent1); opacity: 0.5; }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* SCROLL REVEAL */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      nav ul { gap: 1.2rem; }
+      section { padding: 4rem 1.5rem; }
+      #about { grid-template-columns: 1fr; gap: 3rem; }
+      .music-hero { grid-template-columns: 1fr; }
+      .clips-grid { grid-template-columns: 1fr; }
+      .covers-grid { grid-template-columns: repeat(2, 1fr); }
+      .visuals-intro { grid-template-columns: 1fr; }
+      .visuals-masonry { grid-template-columns: 1fr 1fr; }
+      .visual-item.wide { grid-column: span 2; }
+      .threed-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">SO<span>A</span>N</a>
+    <ul>
+      <li><a href="#about">Profil</a></li>
+      <li><a href="#music">Musique</a></li>
+      <li><a href="#clips">Clips</a></li>
+      <li><a href="#visuals">Visuels</a></li>
+      <li><a href="#threed">3D</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-blob blob1"></div>
+    <div class="hero-blob blob2"></div>
+    <div class="hero-blob blob3"></div>
+    <p class="hero-tag">Portfolio — Création Audiovisuelle &amp; Multimédia</p>
+    <h1 class="hero-name">SO<span class="stroke">AN</span></h1>
+    <p class="hero-sub">Producteur, réalisateur et créatif visuel. Je construis des univers sonores et visuels de A à Z — de la composition au mix, du tournage à la post-production.</p>
+    <div class="hero-cta">
+      <a href="#music" class="btn btn-primary">Voir mes projets</a>
+      <a href="#contact" class="btn btn-outline">Me contacter</a>
+    </div>
+    <p class="hero-scroll">Scroll</p>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>MUSIQUE</span><span class="accent">✦</span>
+      <span>CLIP</span><span class="accent">✦</span>
+      <span>DESIGN</span><span class="accent">✦</span>
+      <span>3D</span><span class="accent">✦</span>
+      <span>MONTAGE</span><span class="accent">✦</span>
+      <span>SON</span><span class="accent">✦</span>
+      <span>VISUEL</span><span class="accent">✦</span>
+      <span>MULTIMÉDIA</span><span class="accent">✦</span>
+      <!-- repeat for seamless loop -->
+      <span>MUSIQUE</span><span class="accent">✦</span>
+      <span>CLIP</span><span class="accent">✦</span>
+      <span>DESIGN</span><span class="accent">✦</span>
+      <span>3D</span><span class="accent">✦</span>
+      <span>MONTAGE</span><span class="accent">✦</span>
+      <span>SON</span><span class="accent">✦</span>
+      <span>VISUEL</span><span class="accent">✦</span>
+      <span>MULTIMÉDIA</span><span class="accent">✦</span>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-text reveal">
+      <p class="section-label">01 — Profil</p>
+      <h2 class="section-title">Qui<br>suis-je ?</h2>
+      <p>Je m'appelle <strong>Soan</strong>, créatif audiovisuel passionné par l'intersection entre le son et l'image. Je produis ma propre musique de A à Z — de la composition au mastering — et je conçois l'identité visuelle qui l'accompagne.</p>
+      <p>Mon profil est <strong>transversal</strong> : producteur musical, réalisateur de clips, designer graphique et créateur 3D. Chaque projet est pour moi une occasion de fusionner ces disciplines.</p>
+    </div>
+    <div class="skills-grid reveal">
+      <div class="skill-item">
+        <p class="skill-name">Production musicale</p>
+        <p class="skill-tools">FL Studio / Ableton<br>Mix & Master</p>
+      </div>
+      <div class="skill-item">
+        <p class="skill-name">Montage vidéo</p>
+        <p class="skill-tools">Premiere Pro<br>DaVinci Resolve</p>
+      </div>
+      <div class="skill-item">
+        <p class="skill-name">Design graphique</p>
+        <p class="skill-tools">Photoshop<br>Illustrator / Figma</p>
+      </div>
+      <div class="skill-item">
+        <p class="skill-name">Modélisation 3D</p>
+        <p class="skill-tools">Blender<br>Cinema 4D</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MUSIC -->
+  <section id="music">
+    <p class="section-label reveal">02 — Musique</p>
+    <div class="music-hero">
+      <div class="reveal">
+        <div class="album-card">
+          <!-- Remplace ce bloc par ton image de cover : <img src="ta-cover.jpg" style="width:100%;height:100%;object-fit:cover;" /> -->
+          <div class="album-placeholder">
+            ALBUM<br>
+            <small>[ Insère ta cover ici ]</small>
+          </div>
+        </div>
+        <p class="album-note">→ Remplace le bloc ci-dessus par ton image de cover d'album</p>
+      </div>
+      <div class="music-info reveal">
+        <h2 class="section-title">Mon<br>album</h2>
+        <p>Un projet musical complet produit intégralement en solo — de l'écriture à la composition, du mix au master. Chaque son, chaque arrangement, chaque texture a été pensé et réalisé par mes soins.</p>
+        <p>Genres : Hip-hop · Électronique · Genre mixte</p>
+        <div class="music-stats">
+          <div class="stat">
+            <p class="stat-num">1</p>
+            <p class="stat-label">Album</p>
+          </div>
+          <div class="stat">
+            <p class="stat-num">2</p>
+            <p class="stat-label">Clips</p>
+          </div>
+          <div class="stat">
+            <p class="stat-num">∞</p>
+            <p class="stat-label">Covers</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="section-title reveal" style="margin-top:5rem; font-size:2.5rem;">Covers <span style="color:var(--accent2)">→</span></h3>
+    <p style="font-size:0.7rem; color:rgba(240,240,240,0.4); margin-bottom:2rem; letter-spacing:0.1em;" class="reveal">Chaque cover conçue et produite par mes soins — univers visuel + production sonore.</p>
+    <div class="covers-grid reveal">
+      <!-- Duplique autant de .cover-card que tu as de covers, et remplace le fond par tes images -->
+      <div class="cover-card">
+        <div class="cover-label">COVER 01</div>
+        <div class="cover-overlay">Écouter →</div>
+      </div>
+      <div class="cover-card">
+        <div class="cover-label">COVER 02</div>
+        <div class="cover-overlay">Écouter →</div>
+      </div>
+      <div class="cover-card">
+        <div class="cover-label">COVER 03</div>
+        <div class="cover-overlay">Écouter →</div>
+      </div>
+      <div class="cover-card">
+        <div class="cover-label">COVER 04</div>
+        <div class="cover-overlay">Écouter →</div>
+      </div>
+      <div class="cover-card">
+        <div class="cover-label">COVER 05</div>
+        <div class="cover-overlay">Écouter →</div>
+      </div>
+      <div class="cover-card">
+        <div class="cover-label">COVER 06</div>
+        <div class="cover-overlay">Écouter →</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIPS -->
+  <section id="clips">
+    <p class="section-label reveal">03 — Clips</p>
+    <h2 class="section-title reveal">Réalisation<br>vidéo</h2>
+    <div class="clips-grid reveal">
+      <div class="clip-card">
+        <div class="clip-bg clip-bg-1">
+          <!-- Remplace par : <img src="thumbnail-clip1.jpg" style="width:100%;height:100%;object-fit:cover;opacity:0.5;"> -->
+          <div class="clip-play"></div>
+        </div>
+        <div class="clip-info">
+          <h3 class="clip-title">[ Titre clip 1 ]</h3>
+          <p class="clip-meta">Réalisation · Montage · Étalonnage</p>
+          <span class="clip-tag tag-solo">Solo</span>
+        </div>
+      </div>
+      <div class="clip-card">
+        <div class="clip-bg clip-bg-2">
+          <!-- Remplace par : <img src="thumbnail-clip2.jpg" style="width:100%;height:100%;object-fit:cover;opacity:0.5;"> -->
+          <div class="clip-play"></div>
+        </div>
+        <div class="clip-info">
+          <h3 class="clip-title">[ Titre clip 2 ]</h3>
+          <p class="clip-meta">Réalisation · Montage collaboratif</p>
+          <span class="clip-tag tag-collab">Collab</span>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:0.65rem; color:rgba(240,240,240,0.3); margin-top:1rem; letter-spacing:0.15em; font-style:italic;" class="reveal">
+      → Ajoute les liens YouTube / Vimeo en href sur chaque carte pour que les jurys puissent regarder directement
+    </p>
+  </section>
+
+  <!-- VISUALS -->
+  <section id="visuals">
+    <p class="section-label reveal">04 — Design visuel</p>
+    <div class="visuals-intro">
+      <div class="reveal">
+        <h2 class="section-title">Affiches &amp;<br>Identité</h2>
+        <p>Chaque projet musical est accompagné d'un univers visuel fort. Affiches, covers, identités visuelles — je conçois l'image de ma musique avec la même rigueur que la production sonore.</p>
+      </div>
+      <div class="reveal" style="display:flex;align-items:flex-end;">
+        <p style="font-size:0.65rem; color:rgba(240,240,240,0.3); letter-spacing:0.1em; line-height:1.8; font-style:italic;">
+          → Remplace chaque bloc coloré par tes affiches et visuels réels
+        </p>
+      </div>
+    </div>
+    <div class="visuals-masonry reveal">
+      <div class="visual-item wide v1">
+        <div class="visual-placeholder">
+          <span class="vp-icon">🖼</span>
+          <span class="vp-type">Affiche principale</span>
+        </div>
+      </div>
+      <div class="visual-item v2">
+        <div class="visual-placeholder">
+          <span class="vp-icon">🎨</span>
+          <span class="vp-type">Visuel 2</span>
+        </div>
+      </div>
+      <div class="visual-item v3">
+        <div class="visual-placeholder">
+          <span class="vp-icon">🎨</span>
+          <span class="vp-type">Visuel 3</span>
+        </div>
+      </div>
+      <div class="visual-item v4">
+        <div class="visual-placeholder">
+          <span class="vp-icon">🎨</span>
+          <span class="vp-type">Visuel 4</span>
+        </div>
+      </div>
+      <div class="visual-item v5">
+        <div class="visual-placeholder">
+          <span class="vp-icon">🎨</span>
+          <span class="vp-type">Visuel 5</span>
+        </div>
+      </div>
+      <div class="visual-item v6">
+        <div class="visual-placeholder">
+          <span class="vp-icon">🎨</span>
+          <span class="vp-type">Visuel 6</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3D -->
+  <section id="threed">
+    <p class="section-label reveal">05 — Modélisation 3D</p>
+    <h2 class="section-title reveal">Univers<br>en volume</h2>
+    <div class="threed-grid reveal">
+      <div class="threed-card t1">
+        <div class="threed-bg">
+          <!-- Remplace par : <img src="render1.jpg" style="width:100%;height:100%;object-fit:cover;"> -->
+          <span class="threed-icon">⬡</span>
+        </div>
+        <div class="threed-overlay">
+          <span>Render 01</span>
+          <span style="color:rgba(255,255,255,0.4)">Blender</span>
+        </div>
+      </div>
+      <div class="threed-card t2">
+        <div class="threed-bg">
+          <span class="threed-icon">◈</span>
+        </div>
+        <div class="threed-overlay">
+          <span>Render 02</span>
+          <span style="color:rgba(255,255,255,0.4)">Blender</span>
+        </div>
+      </div>
+      <div class="threed-card t3">
+        <div class="threed-bg">
+          <span class="threed-icon">◉</span>
+        </div>
+        <div class="threed-overlay">
+          <span>Render 03</span>
+          <span style="color:rgba(255,255,255,0.4)">Blender</span>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:0.65rem; color:rgba(240,240,240,0.3); margin-top:1rem; letter-spacing:0.15em; font-style:italic;" class="reveal">
+      → Remplace les blocs par tes renders 3D — plusieurs angles par projet si possible
+    </p>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-inner">
+      <p class="section-label reveal">06 — Contact</p>
+      <h2 class="section-title reveal">Travaillons<br>ensemble</h2>
+      <p class="reveal">Tu veux échanger sur un projet, une collaboration ou une formation ? Je suis disponible.</p>
+      <!-- Remplace l'adresse email ci-dessous par la tienne -->
+      <a href="mailto:ton@email.com" class="contact-email reveal">ton@email.com</a>
+      <div class="social-links reveal">
+        <a href="#">Instagram</a>
+        <a href="#">SoundCloud</a>
+        <a href="#">YouTube</a>
+        <a href="#">Behance</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 SOAN — Tous droits réservés</p>
+    <div class="footer-dot"></div>
+    <p>Création audiovisuelle &amp; multimédia</p>
+  </footer>
+
+  <script>
+    // CUSTOM CURSOR
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = (mx - 7) + 'px';
+      cursor.style.top  = (my - 7) + 'px';
+    });
+    function animateRing() {
+      rx += (mx - rx - 19) * 0.12;
+      ry += (my - ry - 19) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+    document.querySelectorAll('a, button, .cover-card, .clip-card, .visual-item, .threed-card').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.style.transform = 'scale(2)'; ring.style.transform = 'scale(1.5)'; });
+      el.addEventListener('mouseleave', () => { cursor.style.transform = 'scale(1)';  ring.style.transform = 'scale(1)'; });
+    });
+
+    // SCROLL REVEAL
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
