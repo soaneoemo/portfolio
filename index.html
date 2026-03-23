@@ -847,27 +847,35 @@
     <p class="section-label reveal">03 — Clips</p>
     <h2 class="section-title reveal">Réalisation<br>vidéo</h2>
     <div class="clips-grid reveal">
-      <div class="clip-card">
-        <div class="clip-bg clip-bg-1">
-          <!-- Remplace par : <img src="thumbnail-clip1.jpg" style="width:100%;height:100%;object-fit:cover;opacity:0.5;"> -->
-          <div class="clip-play"></div>
-        </div>
-        <div class="clip-info">
-          <h3 class="clip-title">[ Titre clip 1 ]</h3>
-          <p class="clip-meta">Réalisation · Montage · Étalonnage</p>
-          <span class="clip-tag tag-solo">Solo</span>
-        </div>
-      </div>
-      <div class="clip-card">
-        <div class="clip-bg clip-bg-2">
-          <!-- Remplace par : <img src="thumbnail-clip2.jpg" style="width:100%;height:100%;object-fit:cover;opacity:0.5;"> -->
-          <div class="clip-play"></div>
-        </div>
-        <div class="clip-info">
-          <h3 class="clip-title">[ Titre clip 2 ]</h3>
-          <p class="clip-meta">Réalisation · Montage collaboratif</p>
-          <span class="clip-tag tag-collab">Collab</span>
-        </div>
+<div class="clip-card">
+  <div class="clip-bg clip-bg-1">
+    <div class="clip-play"></div>
+  </div>
+  <div class="clip-info">
+    <h3 class="clip-title">Fourmilière</h3>
+    <p class="clip-meta">Réalisation · Montage · Étalonnage</p>
+    <span class="clip-tag tag-solo">Solo</span>
+  </div>
+  <iframe class="clip-video" width="100%" height="100%" 
+          src="https://www.youtube.com/embed/AgtMg7BH1j8?autoplay=1" 
+          frameborder="0" allow="autoplay; encrypted-media" allowfullscreen
+          style="display:none; position:absolute; top:0; left:0;"></iframe>
+</div>
+
+<div class="clip-card">
+  <div class="clip-bg clip-bg-2">
+    <div class="clip-play"></div>
+  </div>
+  <div class="clip-info">
+    <h3 class="clip-title">Alyx Vance</h3>
+    <p class="clip-meta">Réalisation · Montage collaboratif</p>
+    <span class="clip-tag tag-collab">Collab</span>
+  </div>
+  <iframe class="clip-video" width="100%" height="100%" 
+          src="https://www.youtube.com/embed/GhSb1x_sgR4?autoplay=1" 
+          frameborder="0" allow="autoplay; encrypted-media" allowfullscreen
+          style="display:none; position:absolute; top:0; left:0;"></iframe>
+</div>
       </div>
     </div>
     <p style="font-size:0.65rem; color:rgba(240,240,240,0.3); margin-top:1rem; letter-spacing:0.15em; font-style:italic;" class="reveal">
@@ -1018,6 +1026,17 @@
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // PLAY VIDEO AU CLIC
+document.querySelectorAll('.clip-card').forEach(card => {
+  const play = card.querySelector('.clip-play');
+  const iframe = card.querySelector('.clip-video');
+  play.addEventListener('click', () => {
+    iframe.style.display = 'block';          // Affiche la vidéo
+    play.style.display = 'none';             // Cache le bouton play
+    card.querySelector('.clip-bg').style.display = 'none'; // Cache l’image de fond
+  });
+});
   </script>
 </body>
 </html>
